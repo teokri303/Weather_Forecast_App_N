@@ -31,6 +31,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
   String _weatherData = '';
   String _iconPath = '';
   bool _isLoading = false;
+  bool _hasError = false;
 
   String cityName = '';
   String country = '';
@@ -38,6 +39,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
   String temp = '';
 
   Future<void> _fetchWeatherData() async {
+    _weatherData = '';
     final city = _controller.text;
     if (city.isEmpty) return;
 
@@ -46,6 +48,13 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
 
     setState(() {
       _isLoading = true;
+      _hasError = false;
+      _weatherData = ''; // Clear weather data
+      _iconPath = ''; // Clear icon path
+      cityName = ''; // Clear city name
+      country = ''; // Clear country
+      cond = ''; // Clear condition
+      temp = ''; // Clear temperature
     });
 
     try {
@@ -66,14 +75,16 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
         });
       } else {
         setState(() {
-          _weatherData = 'Error: ${response.reasonPhrase}';
+          _weatherData = 'Given city ${response.reasonPhrase}. \n Try again.';
           _isLoading = false;
+          _hasError = true;
         });
       }
     } catch (e) {
       setState(() {
         _weatherData = 'Failed to load weather data: $e';
         _isLoading = false;
+        _hasError = true;
       });
     }
   }
@@ -96,6 +107,8 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
         return 'assets/icons/snow.png';
       case 'wind':
         return 'assets/icons/wind.png';
+      case 'thunderstorm':
+        return 'assets/icons/rain.png';
       default:
         return 'assets/icons/clear.png';
     }
@@ -122,88 +135,124 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
     }
   }
 
+  String _getBackgroundPath(String condition) {
+    if (_hasError) {
+      return 'assets/gifs/error.jpeg'; // Path to error GIF
+    }
+    switch (condition.toLowerCase()) {
+      case 'clear':
+        return 'assets/gifs/clear_sky.gif';
+      case 'clouds':
+        return 'assets/gifs/clouds.gif';
+      case 'drizzle':
+        return 'assets/gifs/rain.gif'; // Assuming drizzle has its own GIF
+      case 'rain':
+        return 'assets/gifs/rain.gif';
+      case 'snow':
+        return 'assets/gifs/snow.gif';
+      case 'mist':
+        return 'assets/gifs/wind.gif';
+      case 'thunderstorm':
+        return 'assets/gifs/rain.gif';
+      default:
+        return 'assets/gifs/clear_sky.gif'; // Default background if condition is not recognized
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Color textColor = _getColorBasedOnTemperature(temp);
+    String backgroundPath = _getBackgroundPath(
+        cond); // Get the path for the current weather condition
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Weather Forecast App Narratologies'),
-        backgroundColor: Colors.blueGrey[700], // Dark color for AppBar
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSearchBar(),
-            SizedBox(height: 20),
-            if (_isLoading)
-              Center(child: CircularProgressIndicator())
-            else
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _iconPath.isNotEmpty
-                        ? Image.asset(
-                            _iconPath,
-                            height: 200,
-                            width: 200,
-                          )
-                        : Container(),
-                    SizedBox(height: 10),
-                    Text(
-                      '$cityName $country',
-                      style: TextStyle(
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: temp,
-                            style: TextStyle(
-                              fontSize: 80,
-                              fontWeight: FontWeight.bold,
-                              color: textColor,
-                            ),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background GIF
+          Image.asset(
+            backgroundPath,
+            fit: BoxFit.cover,
+          ),
+          // Foreground content
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSearchBar(),
+                SizedBox(height: 20),
+                if (_isLoading)
+                  Center(child: CircularProgressIndicator())
+                else
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _iconPath.isNotEmpty
+                            ? Image.asset(
+                                _iconPath,
+                                height: 200,
+                                width: 200,
+                              )
+                            : Container(),
+                        SizedBox(height: 10),
+                        Text(
+                          '$cityName $country',
+                          style: TextStyle(
+                            fontSize: 50.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
-                          if (temp.isNotEmpty)
-                            TextSpan(
-                              text: '°C',
-                              style: TextStyle(
-                                fontSize:
-                                    40, // Half the size of the temperature text
-                                fontWeight: FontWeight.bold,
-                                color: textColor,
+                        ),
+                        SizedBox(height: 20),
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: temp,
+                                style: TextStyle(
+                                  fontSize: 110,
+                                  fontWeight: FontWeight.bold,
+                                  color: textColor,
+                                ),
                               ),
-                            ),
-                        ],
-                      ),
+                              if (temp.isNotEmpty)
+                                TextSpan(
+                                  text: '°C',
+                                  style: TextStyle(
+                                    fontSize:
+                                        40, // Half the size of the temperature text
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        Text(
+                          cond,
+                          style: TextStyle(
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                            color: textColor,
+                          ),
+                        ),
+                        Text(
+                          _weatherData,
+                          style: TextStyle(fontSize: 36, color: Colors.white),
+                        ),
+                      ],
                     ),
-                    Text(
-                      cond,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: textColor,
-                      ),
-                    ),
-                    Text(
-                      _weatherData,
-                      style: TextStyle(fontSize: 36, color: Colors.blueAccent),
-                    ),
-                  ],
-                ),
-              ),
-          ],
-        ),
+                  ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
