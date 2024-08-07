@@ -155,7 +155,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
       case 'thunderstorm':
         return 'assets/gifs/rain.gif';
       default:
-        return 'assets/gifs/clear_sky.gif'; // Default background if condition is not recognized
+        return 'assets/icons/first.gif'; // Default background if condition is not recognized
     }
   }
 
@@ -166,9 +166,6 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
         cond); // Get the path for the current weather condition
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Weather Forecast App Narratologies'),
-      ),
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -178,11 +175,24 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
             fit: BoxFit.cover,
           ),
           // Foreground content
+
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(height: 30),
+                Center(
+                  child: Text(
+                    "Discover Today's Weather",
+                    style: TextStyle(
+                      fontSize: 35,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 50),
                 _buildSearchBar(),
                 SizedBox(height: 20),
                 if (_isLoading)
@@ -204,20 +214,20 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
                         Text(
                           '$cityName $country',
                           style: TextStyle(
-                            fontSize: 50.0,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.w900,
                             color: Colors.white,
                           ),
                         ),
-                        SizedBox(height: 20),
+                        SizedBox(height: 10),
                         RichText(
                           text: TextSpan(
                             children: [
                               TextSpan(
                                 text: temp,
                                 style: TextStyle(
-                                  fontSize: 110,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 90,
+                                  fontWeight: FontWeight.w900,
                                   color: textColor,
                                 ),
                               ),
@@ -226,7 +236,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
                                   text: '°C',
                                   style: TextStyle(
                                     fontSize:
-                                        40, // Half the size of the temperature text
+                                        20, // Half the size of the temperature text
                                     fontWeight: FontWeight.bold,
                                     color: textColor,
                                   ),
@@ -237,9 +247,9 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
                         Text(
                           cond,
                           style: TextStyle(
-                            fontSize: 40,
+                            fontSize: 25,
                             fontWeight: FontWeight.bold,
-                            color: textColor,
+                            color: Colors.white,
                           ),
                         ),
                         Text(
