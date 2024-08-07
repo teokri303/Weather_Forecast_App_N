@@ -1,1 +1,3 @@
-# Weather_Forecast_App_N
+# weather_forecast_app
+
+A new Flutter project.
