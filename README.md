@@ -4,7 +4,7 @@
 
 This is a simple Flutter-based Weather App that fetches current weather data for a given city using the OpenWeatherMap API. The app features a clean and intuitive UI, allowing users to search for weather information, view the current weather conditions, and save their favorite cities for easy access.
 
-The app is hosted on Netlify and can be accessed via the following URL:
+**The app is hosted on Netlify and can be accessed via the following URL:**
 
 **[Access the Weather App on Netlify](https://weatherforecastappnar.netlify.app)**
 
