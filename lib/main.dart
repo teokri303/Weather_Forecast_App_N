@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'favorites_page.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -13,8 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Weather App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        scaffoldBackgroundColor:
-            Colors.blueGrey[50], // Background color of the app
+        scaffoldBackgroundColor: Colors.blueGrey[50],
       ),
       home: WeatherHomePage(),
     );
@@ -33,7 +34,6 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
   bool _isLoading = false;
   bool _hasError = false;
   bool _isFavorite = false;
-
   String cityName = '';
   String country = '';
   String cond = '';
@@ -41,24 +41,26 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
 
   List<String> _favoriteCities = [];
 
+//Fetching weather data using OpenWeather Free API------------------------------------------------------------------------------------------------------
   Future<void> _fetchWeatherData() async {
     _weatherData = '';
     final city = _controller.text.trim();
     if (city.isEmpty) return;
 
     final url =
-        'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=98b63ef055bac43032a198a85f645ceb&units=metric'; // Replace with actual API Key
+        'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=98b63ef055bac43032a198a85f645ceb&units=metric';
 
+//Clearing the states
     setState(() {
       _isLoading = true;
       _hasError = false;
-      _weatherData = ''; // Clear weather data
-      _iconPath = ''; // Clear icon path
+      _weatherData = '';
+      _iconPath = '';
       _isFavorite = false;
-      cityName = ''; // Clear city name
-      country = ''; // Clear country
-      cond = ''; // Clear condition
-      temp = ''; // Clear temperature
+      cityName = '';
+      country = '';
+      cond = '';
+      temp = '';
     });
 
     try {
@@ -75,7 +77,6 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
           cond = data['weather'][0]['main'];
           temp = "${data['main']['temp'].toInt()}";
 
-          // Update the _isFavorite state based on whether the city is in the favorites list
           _isFavorite = _favoriteCities.contains(city);
 
           _isLoading = false;
@@ -96,7 +97,9 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
     }
   }
 
-//weather icon
+//Some coloring and visual parameters -------------------------------------------------------------------------------------------------------------------------
+
+//Weather icon based on condition
   String _getIconPath(String condition) {
     switch (condition.toLowerCase()) {
       case 'clear':
@@ -122,7 +125,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
     }
   }
 
-//temperature color
+//Temperature color based on temperature
   Color _getColorBasedOnTemperature(String temp) {
     int temperature;
     try {
@@ -144,10 +147,10 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
     }
   }
 
-//background gifs
+//Background gifs based on condition
   String _getBackgroundPath(String condition) {
     if (_hasError) {
-      return 'assets/gifs/error.jpeg'; // Path to error GIF
+      return 'assets/gifs/error.jpeg';
     }
     switch (condition.toLowerCase()) {
       case 'clear':
@@ -155,7 +158,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
       case 'clouds':
         return 'assets/gifs/clouds.gif';
       case 'drizzle':
-        return 'assets/gifs/clouds.gif'; // Assuming drizzle has its own GIF
+        return 'assets/gifs/clouds.gif';
       case 'rain':
         return 'assets/gifs/rain.gif';
       case 'snow':
@@ -165,30 +168,29 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
       case 'thunderstorm':
         return 'assets/gifs/rain.gif';
       default:
-        return 'assets/icons/first.gif'; // Default background if condition is not recognized
+        return 'assets/icons/first.gif';
     }
   }
 
+//Function to add or remove one city from favorites when the heart button pressed
   void _addToFavorites() {
-    final city = _controller.text.trim(); // Trim whitespace
+    final city = _controller.text.trim();
     if (city.isNotEmpty) {
       setState(() {
         if (_favoriteCities.contains(city)) {
-          // If the city is already in the favorites list, remove it
           _favoriteCities.remove(city);
         } else {
-          // If the city is not in the favorites list, add it
           _favoriteCities.add(city);
         }
       });
     }
   }
 
+//Main page --------------------------------------------------------------------------------------------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     Color textColor = _getColorBasedOnTemperature(temp);
-    String backgroundPath = _getBackgroundPath(
-        cond); // Get the path for the current weather condition
+    String backgroundPath = _getBackgroundPath(cond);
 
     return Scaffold(
       body: Stack(
@@ -199,7 +201,6 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
             backgroundPath,
             fit: BoxFit.cover,
           ),
-          // Foreground content
 
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -207,7 +208,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 30),
-                Center(
+                const Center(
                   child: Text(
                     "Discover Today's Weather",
                     style: TextStyle(
@@ -237,7 +238,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
                             : Container(),
                         Text(
                           '$cityName $country',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 30.0,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
@@ -259,8 +260,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
                                 TextSpan(
                                   text: '°C',
                                   style: TextStyle(
-                                    fontSize:
-                                        20, // Half the size of the temperature text
+                                    fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     color: textColor,
                                   ),
@@ -270,7 +270,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
                         ),
                         Text(
                           cond,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 25,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -295,7 +295,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
                               ),
                             );
                           },
-                          child: Text('View Favorite Citys'),
+                          child: Text('Your Favorite Cities'),
                         ),
                       ],
                     ),
@@ -308,20 +308,20 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
     );
   }
 
+  //Seperate widjet for the SEARCHBAR ---------------------------------------------------------------------------------------------------------
+
   Widget _buildSearchBar() {
     return Center(
       child: Container(
-        width: double.infinity, // Allows the container to take full width
-        padding: EdgeInsets.symmetric(
-            horizontal: 16), // Add padding for some spacing
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: 16),
         child: Wrap(
-          spacing: 10, // Spacing between items
-          runSpacing: 10, // Spacing between rows
-          alignment: WrapAlignment.center, // Align items in the center
+          spacing: 10,
+          runSpacing: 10,
+          alignment: WrapAlignment.center,
           children: [
             Container(
-              constraints:
-                  BoxConstraints(maxWidth: 300), // Max width of the search bar
+              constraints: BoxConstraints(maxWidth: 300),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(30),
@@ -356,7 +356,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
               style: ElevatedButton.styleFrom(
                 shape: CircleBorder(),
                 padding: EdgeInsets.all(16),
-                backgroundColor: Colors.white, // Background color
+                backgroundColor: Colors.white,
               ),
               child: Icon(Icons.search, color: Colors.black),
             ),
@@ -370,7 +370,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
               style: ElevatedButton.styleFrom(
                 shape: CircleBorder(),
                 padding: EdgeInsets.all(16),
-                backgroundColor: Colors.white, // Background color
+                backgroundColor: Colors.white,
               ),
               child: Icon(
                 _isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -379,66 +379,6 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class FavoritesPage extends StatelessWidget {
-  final List<String> favoriteCities;
-  final Function(String) onCitySelected;
-
-  FavoritesPage({required this.favoriteCities, required this.onCitySelected});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Favorite Cities'),
-      ),
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Background GIF
-          Positioned.fill(
-            child: Image.asset(
-              'assets/gifs/clear_sky.gif', // Replace with your GIF path
-              fit: BoxFit.cover,
-            ),
-          ),
-          // Foreground content
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ListView.builder(
-              itemCount: favoriteCities.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  elevation: 5, // Add shadow for a more elevated look
-                  child: ListTile(
-                    title: Center(
-                      child: Text(
-                        favoriteCities[index],
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    onTap: () {
-                      onCitySelected(favoriteCities[index]);
-                      Navigator.pop(context);
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
       ),
     );
   }
