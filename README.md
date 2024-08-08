@@ -1,17 +1,17 @@
-# Weather App
+# 🌦️ Weather Forecast Application
 
 ## Overview
 
 This is a simple Flutter-based Weather App that fetches current weather data for a given city using the OpenWeatherMap API. The app features a clean and intuitive UI, allowing users to search for weather information, view the current weather conditions, and save their favorite cities for easy access.
 
-## Features
+## 🚀 Features
 
-- **Weather Search:** Users can enter a city name to get real-time weather data including temperature, weather condition, and an appropriate weather icon.
-- **Favorites Management:** Users can save their favorite cities and easily switch between them to check the weather.
-- **Dynamic Background and Icon:** The app displays dynamic backgrounds and icons based on the current weather condition.
-- **Responsive UI:** The app is designed to work smoothly on different screen sizes with a responsive layout.
+- 🔍 **Weather Search:** Search for current weather conditions by entering any city name.
+- ❤️ **Favorites Management:** Save and manage your favorite cities for easy access to their weather data.
+- 🌈 **Dynamic UI:** The app's background and icons change based on the current weather, providing a visually engaging experience.
+- 📱 **Responsive Design:** The layout adapts to different screen sizes for a seamless experience across devices.
 
-## Installation
+## 🛠️ Installation
 
 1. **Clone the Repository**
    ```sh
@@ -32,36 +32,18 @@ This is a simple Flutter-based Weather App that fetches current weather data for
    flutter run
    ```
 
-## API KEY
+## 🔑 API KEY
 
 This app uses the OpenWeatherMap API to fetch weather data. Replace the API key in the code with your own to avoid reaching the API request limit.
 
-**Run the App**
-
 ```dart
-flutter run
+final url = 'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=YOUR_API_KEY&units=metric';
+
 ```
 
 You can obtain an API key by signing up at OpenWeatherMap.
 
-## Features
-
-1. **Search for a City:**
-
-   - Enter a city name in the search bar and press the search icon to fetch the weather data.
-
-2. **Add to Favorites:**
-
-   - Click the heart icon to add the city to your list of favorite cities.
-
-3. **View Favorites:**
-
-   - Press the "Your Favorite Cities" button to navigate to the favorites page and view the saved cities.
-
-4. **Select Favorite City:**
-   - Click on a favorite city to view its current weather.
-
-## File Structure
+## 📂 File Structure
 
 ```
 lib/
@@ -75,13 +57,13 @@ lib/
 
 ```
 
-## Assets
+## 🖼️ Assets
 
 - **Icons:** The app includes various weather icons such as clear, clouds, rain, snow, etc., which are located in the assets/icons/ directory.
 
 - **Backgrounds:** GIFs for dynamic backgrounds based on weather conditions are stored in the assets/gifs/ directory.
 
-## Design
+## 🎨 Design
 
 1. **User Interface (UI) Design**
 
