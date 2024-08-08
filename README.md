@@ -1,6 +1,6 @@
 # 🌦️ Weather Forecast Application
 
-## Overview
+## 📝 Overview
 
 This is a simple Flutter-based Weather App that fetches current weather data for a given city using the OpenWeatherMap API. The app features a clean and intuitive UI, allowing users to search for weather information, view the current weather conditions, and save their favorite cities for easy access.
 
@@ -17,7 +17,8 @@ Search for current weather conditions by entering any city name.
 
 ❤️ **Favorites Management:**
 Save and manage your favorite cities for easy access to their weather data.
-🌈 **Dynamic UI:**
+
+🌟 **Dynamic UI:**
 The app's background and icons change based on the current weather, providing a visually engaging experience.
 
 📱 **Responsive Design:**
