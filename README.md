@@ -4,12 +4,24 @@
 
 This is a simple Flutter-based Weather App that fetches current weather data for a given city using the OpenWeatherMap API. The app features a clean and intuitive UI, allowing users to search for weather information, view the current weather conditions, and save their favorite cities for easy access.
 
+The app is hosted on Netlify and can be accessed via the following URL:
+
+**[Access the Weather App on Netlify](https://weatherforecastappnar.netlify.app)**
+
+**Note:** The app is optimized for phone devices and is best experienced on mobile rather than desktop.
+
 ## 🚀 Features
 
-- 🔍 **Weather Search:** Search for current weather conditions by entering any city name.
-- ❤️ **Favorites Management:** Save and manage your favorite cities for easy access to their weather data.
-- 🌈 **Dynamic UI:** The app's background and icons change based on the current weather, providing a visually engaging experience.
-- 📱 **Responsive Design:** The layout adapts to different screen sizes for a seamless experience across devices.
+🔍 **Weather Search:**
+Search for current weather conditions by entering any city name.
+
+❤️ **Favorites Management:**
+Save and manage your favorite cities for easy access to their weather data.
+🌈 **Dynamic UI:**
+The app's background and icons change based on the current weather, providing a visually engaging experience.
+
+📱 **Responsive Design:**
+The layout adapts to different screen sizes for a seamless experience across devices.
 
 ## 🛠️ Installation
 
