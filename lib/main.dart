@@ -34,6 +34,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
   bool _isLoading = false;
   bool _hasError = false;
   bool _isFavorite = false;
+  bool _hasSearched = false;
   String cityName = '';
   String country = '';
   String cond = '';
@@ -80,6 +81,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
           _isFavorite = _favoriteCities.contains(city);
 
           _isLoading = false;
+          _hasSearched = true;
         });
       } else {
         setState(() {
@@ -129,13 +131,13 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
   Color _getColorBasedOnTemperature(String temp) {
     int temperature;
     try {
-      temperature = int.parse(temp); // Convert the string to an integer
+      temperature = int.parse(temp);
     } catch (e) {
       print('FormatException: ${e.toString()}');
-      temperature = 0; // Default value if parsing fails
+      temperature = 0;
     }
     if (temperature <= 0) {
-      return Colors.blue[900]!; // Dark blue
+      return Colors.blue[900]!;
     } else if (temperature <= 10) {
       return Colors.blue;
     } else if (temperature <= 20) {
@@ -196,28 +198,26 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Background GIF
           Image.asset(
             backgroundPath,
             fit: BoxFit.cover,
           ),
-
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 30),
-                const Center(
-                  child: Text(
-                    "Discover Today's Weather",
-                    style: TextStyle(
-                      fontSize: 35,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                if (!_hasSearched)
+                  const Center(
+                    child: Text(
+                      "Discover Today's Weather",
+                      style: TextStyle(
+                        fontSize: 35,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                ),
                 SizedBox(height: 30),
                 _buildSearchBar(),
                 SizedBox(height: 10),
@@ -308,7 +308,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
     );
   }
 
-  //Seperate widjet for the SEARCHBAR ---------------------------------------------------------------------------------------------------------
+  //Seperate widjet for the SEARCHBAR ----------------------------------------------------------------------
 
   Widget _buildSearchBar() {
     return Center(
