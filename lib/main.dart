@@ -32,15 +32,18 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
   String _iconPath = '';
   bool _isLoading = false;
   bool _hasError = false;
+  bool _isFavorite = false;
 
   String cityName = '';
   String country = '';
   String cond = '';
   String temp = '';
 
+  List<String> _favoriteCities = [];
+
   Future<void> _fetchWeatherData() async {
     _weatherData = '';
-    final city = _controller.text;
+    final city = _controller.text.trim();
     if (city.isEmpty) return;
 
     final url =
@@ -51,6 +54,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
       _hasError = false;
       _weatherData = ''; // Clear weather data
       _iconPath = ''; // Clear icon path
+      _isFavorite = false;
       cityName = ''; // Clear city name
       country = ''; // Clear country
       cond = ''; // Clear condition
@@ -71,6 +75,9 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
           cond = data['weather'][0]['main'];
           temp = "${data['main']['temp'].toInt()}";
 
+          // Update the _isFavorite state based on whether the city is in the favorites list
+          _isFavorite = _favoriteCities.contains(city);
+
           _isLoading = false;
         });
       } else {
@@ -89,6 +96,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
     }
   }
 
+//weather icon
   String _getIconPath(String condition) {
     switch (condition.toLowerCase()) {
       case 'clear':
@@ -114,6 +122,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
     }
   }
 
+//temperature color
   Color _getColorBasedOnTemperature(String temp) {
     int temperature;
     try {
@@ -135,6 +144,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
     }
   }
 
+//background gifs
   String _getBackgroundPath(String condition) {
     if (_hasError) {
       return 'assets/gifs/error.jpeg'; // Path to error GIF
@@ -145,7 +155,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
       case 'clouds':
         return 'assets/gifs/clouds.gif';
       case 'drizzle':
-        return 'assets/gifs/rain.gif'; // Assuming drizzle has its own GIF
+        return 'assets/gifs/clouds.gif'; // Assuming drizzle has its own GIF
       case 'rain':
         return 'assets/gifs/rain.gif';
       case 'snow':
@@ -156,6 +166,21 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
         return 'assets/gifs/rain.gif';
       default:
         return 'assets/icons/first.gif'; // Default background if condition is not recognized
+    }
+  }
+
+  void _addToFavorites() {
+    final city = _controller.text.trim(); // Trim whitespace
+    if (city.isNotEmpty) {
+      setState(() {
+        if (_favoriteCities.contains(city)) {
+          // If the city is already in the favorites list, remove it
+          _favoriteCities.remove(city);
+        } else {
+          // If the city is not in the favorites list, add it
+          _favoriteCities.add(city);
+        }
+      });
     }
   }
 
@@ -192,9 +217,9 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 50),
+                SizedBox(height: 30),
                 _buildSearchBar(),
-                SizedBox(height: 20),
+                SizedBox(height: 10),
                 if (_isLoading)
                   Center(child: CircularProgressIndicator())
                 else
@@ -206,11 +231,10 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
                         _iconPath.isNotEmpty
                             ? Image.asset(
                                 _iconPath,
-                                height: 200,
-                                width: 200,
+                                height: 180,
+                                width: 180,
                               )
                             : Container(),
-                        SizedBox(height: 10),
                         Text(
                           '$cityName $country',
                           style: TextStyle(
@@ -219,7 +243,7 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
                             color: Colors.white,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 5),
                         RichText(
                           text: TextSpan(
                             children: [
@@ -256,6 +280,23 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
                           _weatherData,
                           style: TextStyle(fontSize: 36, color: Colors.white),
                         ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FavoritesPage(
+                                  favoriteCities: _favoriteCities,
+                                  onCitySelected: (city) {
+                                    _controller.text = city;
+                                    _fetchWeatherData();
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                          child: Text('View Favorite Citys'),
+                        ),
                       ],
                     ),
                   ),
@@ -270,39 +311,134 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
   Widget _buildSearchBar() {
     return Center(
       child: Container(
-        width: 300,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Row(
+        width: double.infinity, // Allows the container to take full width
+        padding: EdgeInsets.symmetric(
+            horizontal: 16), // Add padding for some spacing
+        child: Wrap(
+          spacing: 10, // Spacing between items
+          runSpacing: 10, // Spacing between rows
+          alignment: WrapAlignment.center, // Align items in the center
           children: [
-            Expanded(
-              child: TextField(
-                controller: _controller,
-                decoration: InputDecoration(
-                  hintText: 'Enter city name',
-                  hintStyle: TextStyle(color: Colors.grey[600]),
-                  border: InputBorder.none,
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                ),
+            Container(
+              constraints:
+                  BoxConstraints(maxWidth: 300), // Max width of the search bar
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        hintText: 'Enter city name',
+                        hintStyle: TextStyle(color: Colors.grey[600]),
+                        border: InputBorder.none,
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            IconButton(
-              icon: Icon(Icons.search, color: Colors.blueGrey[600]),
+            ElevatedButton(
               onPressed: _fetchWeatherData,
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(16),
+                backgroundColor: Colors.white, // Background color
+              ),
+              child: Icon(Icons.search, color: Colors.black),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _addToFavorites();
+                setState(() {
+                  _isFavorite = !_isFavorite;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(16),
+                backgroundColor: Colors.white, // Background color
+              ),
+              child: Icon(
+                _isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: Colors.red,
+              ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class FavoritesPage extends StatelessWidget {
+  final List<String> favoriteCities;
+  final Function(String) onCitySelected;
+
+  FavoritesPage({required this.favoriteCities, required this.onCitySelected});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Favorite Cities'),
+      ),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background GIF
+          Positioned.fill(
+            child: Image.asset(
+              'assets/gifs/clear_sky.gif', // Replace with your GIF path
+              fit: BoxFit.cover,
+            ),
+          ),
+          // Foreground content
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ListView.builder(
+              itemCount: favoriteCities.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  elevation: 5, // Add shadow for a more elevated look
+                  child: ListTile(
+                    title: Center(
+                      child: Text(
+                        favoriteCities[index],
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      onCitySelected(favoriteCities[index]);
+                      Navigator.pop(context);
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
